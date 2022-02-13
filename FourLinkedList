@@ -1,80 +1,138 @@
-//import java.util.LinkedList;
-
 public class FourLinkedList<E> {
 
 	private static class Node<E> {
 
-		private E element;			//reference to element stored at this node
-		private Node<E> prev;		//reference to previous node in list
-		private Node<E> next;		//reference to the next nod in the list
-		private Node<E> up;			//reference to the 4th node in front of this Node in the list
-		private Node<E> down;		//reference to the 4th list behind this node
+		private E element; // reference to element stored at this node
+		private Node<E> prev; // reference to previous node in list
+		private Node<E> next; // reference to the next nod in the list
 
-		public Node(E e, Node<E> p, Node<E> n, Node<E> u, Node<E> d) {
+		public Node(E e, Node<E> p, Node<E> n) {
 			element = e;
 			prev = p;
 			next = n;
-			up = u;
-			down = d;
 		}
 
-		public E getElement() {return element;}
+		public E getElement() {
+			return element;
+		}
 
-		public Node<E> getPrev() {return prev;}
+		public Node<E> getPrev() {
+			return prev;
+		}
 
-		public Node<E> getNext() {return next;}
+		public Node<E> getNext() {
+			return next;
+		}
 
-		public Node<E> getUp() {return up;}
+		public void setPrev(Node<E> p) {
+			prev = p;
+		}
 
-		public Node<E> getDown() {return down;}
-		
-		public void setPrev(Node<E> p) {prev = p;}
-		
-		public void setNext(Node<E> n) {next = n;}
-		
-		public void setUp(Node<E> u) {up = u;}
-		
-		public void setDown(Node<E> d) {down = d;}
+		public void setNext(Node<E> n) {
+			next = n;
+		}
+
+
 	}
-	private Node<E> header;		//header sentinel
-	private Node<E> trailer;	//trailer sentinel
-	private int size = 0;		//number of elements in list
-	
-	FourLinkedList(){
-		header = new Node<>(null,null,null,null,null);
-		trailer = new Node<>(null, header,null,null,null);
+
+	private Node<E> header; // header sentinel
+	private Node<E> trailer; // trailer sentinel
+	private int size = 0; // number of elements in list
+	private String pr;
+
+// set up a new List
+	FourLinkedList() {
+		header = new Node<>(null, null, null);
+		trailer = new Node<>(null, header, null);
 		header.setNext(trailer);
 	}
 
+// add an element straight to the back of the list
 	public boolean add(E e) {
-		return false;
+		// WORK ON THIS
+
+			addBetween(e, trailer.getPrev(), trailer);
+		return true;
 	}
 
+// adds a number to the List with the index being specified
 	public void add(int index, E element) {
+		Node<E> holder = indexer(index);
+			addBetween(element, holder.getPrev(), holder);
+	}
+
+// adds an element between two nodes
+	private void addBetween(E e, Node<E> predecessor, Node<E> successor) {
+
+		Node<E> newest = new Node<>(e, predecessor, successor);
+		predecessor.setNext(newest);
+		successor.setPrev(newest);
 		size++;
 	}
 
+// removes an element from the List
 	public E remove(int index) {
-		return null;
+		Node<E> holder = indexer(index); // finds the index from the list
+		Node<E> predecessor = holder.getPrev(); // holds the previous item on the list
+		Node<E> successor = holder.getNext(); // holds the next item on the list
+		predecessor.setNext(successor); // these both close the gap and finish up the deleting
+		successor.setPrev(predecessor);
+		size--;
+		return holder.getElement();
 	}
 
+// get the element from a specific part of the list
 	public E get(int index) {
-		return null;
+		Node<E> holder = indexer(index);
+		return holder.getNext().getElement();
 	}
 
+// Tells you how big the list is
 	public int size() {
 		return size;
 	}
 
+// clears the whole list
 	public void clear() {
+		size = 0;
+		header = new Node<>(null, null, null);
+		trailer = new Node<>(null, header, null);
+		header.setNext(trailer);
+
 	}
 
+// Method to tell the program when to search from the first or second half
+	public Node<E> indexer(int index) {
+		Node<E> holder = header;
+		int count = 0;
+		if (index <= size / 2) {
+			while (count != index) {
+				holder = holder.getNext();
+				count++;
+			}
+		} else {
+			count = size - 1;
+			holder = trailer;
+
+			while (count != index - 2) {
+				holder = holder.getPrev();
+				count--;
+			}
+		}
+		return holder;
+
+	}
+
+// Prints out the List in a viewer friendly display
 	public String toString() {
-		return null;
+		pr = "[";
+		for (int i = 0; i < size; i++) {
+			pr += this.get(i);
+			if (i != size - 1) {
+				pr += ", ";
+			}
+		}
+		pr += "]";
+		return pr;
 	}
-
-	public static void main(String[] args) {
-
-	}
-
 }
